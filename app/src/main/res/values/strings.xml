@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">IRSO App</string>
+
+    <string name="enter_email"> Ingrese Email</string>
+    <string name="enter_password"> Ingrese Contraseña</string>
+    <string name="register"> Registrarse </string>
+</resources>

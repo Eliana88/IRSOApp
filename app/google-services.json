@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "379471094490",
+    "firebase_url": "https://irso-app.firebaseio.com",
+    "project_id": "irso-app",
+    "storage_bucket": "irso-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379471094490:android:988fe0ad26ae220f",
+        "android_client_info": {
+          "package_name": "com.example.irsoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "379471094490-442bbq885mapd4mvnnj9j4ddp141qhjh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.irsoapp",
+            "certificate_hash": "ed291f6cbdb013c5910fa347b6f02ee79e576864"
+          }
+        },
+        {
+          "client_id": "379471094490-pdar0tc1fb37sicfp8ek3uuoqe6l69bv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh2H3IwmUMecnr_rwtvte2qUi92NyV3Mo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379471094490-pdar0tc1fb37sicfp8ek3uuoqe6l69bv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
