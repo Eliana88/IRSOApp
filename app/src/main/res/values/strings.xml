@@ -4,4 +4,6 @@
     <string name="enter_email"> Ingrese Email</string>
     <string name="enter_password"> Ingrese Contraseña</string>
     <string name="register"> Registrarse </string>
+    <string name="login"> Login </string>
+    <string name="bienvenido">Bienvenido: </string>
 </resources>

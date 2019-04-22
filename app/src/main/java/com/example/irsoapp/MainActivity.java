@@ -1,6 +1,7 @@
 package com.example.irsoapp;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -22,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText TextEmail;
     private EditText TextPassword;
     private Button BtnRegistrar;
+    private Button BtnLogin;
+
     private ProgressDialog progressDialog;
 
 
@@ -37,15 +41,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         firebaseAuth = FirebaseAuth.getInstance();
 
         //Referenciamos los views
-        TextEmail = (EditText) findViewById(R.id.txtEmail);
-        TextPassword = (EditText) findViewById(R.id.textPassword);
+        TextEmail = findViewById(R.id.txtEmail);
+
+        TextPassword = findViewById(R.id.txtPassword);
 
         BtnRegistrar = (Button) findViewById(R.id.btnRegistrar);
+
+        BtnLogin = (Button) findViewById(R.id.btnLogin);
 
         progressDialog = new ProgressDialog(this);
 
         //attaching listener to button
         BtnRegistrar.setOnClickListener(this);
+        BtnLogin.setOnClickListener(this);
     }
 
     private void registrarUsuario(){
@@ -78,19 +86,81 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if(task.isSuccessful()){
 
                             Toast.makeText(MainActivity.this,"Se ha registrado el usuario con el email: "+ TextEmail.getText(),Toast.LENGTH_LONG).show();
-                        }else{
+                        }else {
+                            if (task.getException() instanceof FirebaseAuthUserCollisionException) {//si se presenta una colision
+                                Toast.makeText(MainActivity.this, "El usuario ya existe ", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(MainActivity.this, "No se pudo registrar el usuario ", Toast.LENGTH_LONG).show();
 
-                            Toast.makeText(MainActivity.this,"No se pudo registrar el usuario ",Toast.LENGTH_LONG).show();
+                            }
                         }
-                        progressDialog.dismiss();
                     }
+                });
+
+    }
+
+
+    private void loguearUsuario (){
+        //Obtenemos el email y la contraseña desde las cajas de texto
+        final String email = TextEmail.getText().toString().trim();
+        String password  = TextPassword.getText().toString().trim();
+
+        //Verificamos que las cajas de texto no esten vacías
+        if(TextUtils.isEmpty(email)){
+            Toast.makeText(this,"Se debe ingresar un email",Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if(TextUtils.isEmpty(password)){
+            Toast.makeText(this,"Falta ingresar la contraseña",Toast.LENGTH_LONG).show();
+            return;
+        }
+
+
+        progressDialog.setMessage("Realizando consulta en linea...");
+        progressDialog.show();
+
+        //Consultar si el usuario existe
+        Task<AuthResult> no_se_pudo_loguear_ = firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        //checking if success
+                        if (task.isSuccessful()) {
+
+                            int pos = email.indexOf("@"); //obtiene el usuario del mail desde el principio hasta la posicion del arroba
+                            String user = email.substring(0, pos);
+
+                            Toast.makeText(MainActivity.this, "Bienvenido: " + TextEmail.getText(), Toast.LENGTH_LONG).show();
+
+                            // evaluar si el usuario es admin o user
+
+                            Intent intencion = new Intent(getApplication(), UserActivity.class);
+                            intencion.putExtra(UserActivity.user, user); //sirve para enviar datos a otra activity
+                            startActivity(intencion);
+
+                        } else
+                            Toast.makeText(MainActivity.this, "No se pudo loguear ", Toast.LENGTH_LONG).show();
+                    }
+
+
                 });
 
     }
 
     @Override
     public void onClick(View view) {
+
+        switch (view.getId()){
+            case R.id.btnRegistrar:
+                registrarUsuario();
+                break;
+            case R.id.btnLogin:
+                loguearUsuario();
+                break;
+        }
+
         //Invocamos al método:
-        registrarUsuario();
+
     }
 }
