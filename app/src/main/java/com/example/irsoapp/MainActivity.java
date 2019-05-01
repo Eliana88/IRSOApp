@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -31,6 +30,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Declaramos un objeto firebaseAuth
     private FirebaseAuth firebaseAuth;
+
+    private char adminEncontrado;
+
+    private String[] adminEmail = {"marianoarmas@gmail.com","eliana.ramos@gmail.com"};
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
 
-        progressDialog.setMessage("Realizando consulta en linea...");
-        progressDialog.show();
+       /* progressDialog.setMessage("Realizando consulta en linea...");
+        progressDialog.show();*/
 
         //Consultar si el usuario existe
         Task<AuthResult> no_se_pudo_loguear_ = firebaseAuth.signInWithEmailAndPassword(email, password)
@@ -127,22 +132,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         //checking if success
                         if (task.isSuccessful()) {
+                           // si el logueo es exitoso pregunto que tipo de usuario es, si es admin o user
+                           int pos = email.indexOf("@"); //obtiene el usuario del mail desde el principio hasta la posicion del arroba
+                           String user = email.substring(0, pos);
 
-                            int pos = email.indexOf("@"); //obtiene el usuario del mail desde el principio hasta la posicion del arroba
-                            String user = email.substring(0, pos);
+                            buscarAdmin(email);
+                            if (adminEncontrado == 'n') {
+                                Toast.makeText(MainActivity.this, "Bienvenido: " + TextEmail.getText(), Toast.LENGTH_LONG).show();
+                                Intent intencion2 = new Intent(getApplication(), UserActivity.class);
+                                intencion2.putExtra(UserActivity.user, user); //sirve para enviar datos a otra activity
+                                startActivity(intencion2);
+                            } else {
+                                Toast.makeText(MainActivity.this, "Bienvenido Admin: " + TextEmail.getText(), Toast.LENGTH_LONG).show();
+                                Intent intencion = new Intent(getApplication(), AdminActivity.class);
+                                intencion.putExtra(AdminActivity.user, user); //sirve para enviar datos a otra activity
+                                startActivity(intencion);
 
-                            Toast.makeText(MainActivity.this, "Bienvenido: " + TextEmail.getText(), Toast.LENGTH_LONG).show();
-
-                            // evaluar si el usuario es admin o user
-
-                            Intent intencion = new Intent(getApplication(), UserActivity.class);
-                            intencion.putExtra(UserActivity.user, user); //sirve para enviar datos a otra activity
-                            startActivity(intencion);
+                            }
 
                         } else
                             Toast.makeText(MainActivity.this, "No se pudo loguear ", Toast.LENGTH_LONG).show();
                     }
-
 
                 });
 
@@ -159,8 +169,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 loguearUsuario();
                 break;
         }
-
         //Invocamos al método:
-
     }
-}
+
+
+    public void buscarAdmin (String email) {
+        for (int i = 0; i < adminEmail.length; i++) {
+            if (adminEmail[i].equals(email)) {
+                adminEncontrado = 's';
+            } else {
+                adminEncontrado = 'n';
+            }
+        }
+    }
+
+
+
+ }
